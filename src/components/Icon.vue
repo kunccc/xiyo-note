@@ -1,5 +1,5 @@
 <template>
-  <svg>
+  <svg class="icon">
     <use :xlink:href="'#'+name"/>
   </svg>
 </template>
@@ -17,5 +17,9 @@ export default class Icon extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
+.icon {
+  width: 28px;
+  height: 32px;
+  fill: #ccc
+}
 </style>

@@ -1,12 +1,18 @@
 <template>
   <div id="sidebar">
     <div class="link">
-      <router-link to="/note/1" title="笔记">笔记</router-link>
-      <router-link to="/notebooks" title="笔记本">笔记本</router-link>
-      <router-link to="/trash/2" title="回收站">回收站</router-link>
+      <router-link to="/note/1" title="笔记">
+        <Icon name="detail"/>
+      </router-link>
+      <router-link to="/notebooks" title="笔记本">
+        <Icon name="notebook"/>
+      </router-link>
+      <router-link to="/trash/2" title="回收站">
+        <Icon name="delete"/>
+      </router-link>
     </div>
     <div class="logout">
-      返回
+      <Icon name="backto"/>
     </div>
   </div>
 </template>
