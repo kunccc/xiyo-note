@@ -14,6 +14,7 @@ export default class Avatar extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/styles/helper.scss";
 span {
   display: inline-block;
   width: 30px;
@@ -21,7 +22,7 @@ span {
   text-align: center;
   line-height: 32px;
   border-radius: 50%;
-  background: #f2b81c;
+  background: $color-highlight;
   color: #fff;
   text-shadow: 1px 0 1px #795c19;
   font-weight: bold;
