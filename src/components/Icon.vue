@@ -20,6 +20,6 @@ export default class Icon extends Vue {
 .icon {
   width: 28px;
   height: 32px;
-  fill: #ccc
+  fill: #fff
 }
 </style>

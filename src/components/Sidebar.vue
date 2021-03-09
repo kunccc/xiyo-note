@@ -1,5 +1,6 @@
 <template>
   <div id="sidebar">
+    <Avatar/>
     <div class="link">
       <router-link to="/note/1" title="笔记">
         <Icon name="detail"/>
@@ -20,8 +21,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
+import Avatar from '@/components/Avatar.vue';
 
-@Component
+@Component({
+  components: {Avatar}
+})
 export default class Sidebar extends Vue {
 
 }
