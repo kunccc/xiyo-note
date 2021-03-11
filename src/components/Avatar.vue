@@ -9,7 +9,7 @@ import {Component} from 'vue-property-decorator';
 @Component
 export default class Avatar extends Vue {
   user = {username: 'hunger'};
-  slug = 'a';
+  slug = 'H';
 }
 </script>
 
