@@ -30,6 +30,11 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 
+const request = require('@/helpers/request.js').default;
+request('/auth/login', 'post', {
+  username: 'hunger', password: '12345dsa'
+}).then((data: {}) => {console.log(data);});
+
 @Component
 export default class Login extends Vue {
   isShowLogin = true;
