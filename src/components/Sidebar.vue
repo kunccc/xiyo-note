@@ -12,7 +12,7 @@
         <Icon name="delete"/>
       </router-link>
     </div>
-    <div class="logout">
+    <div class="logout" @click="logout">
       <Icon name="backto"/>
     </div>
   </div>
@@ -23,11 +23,15 @@ import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Avatar from '@/components/Avatar.vue';
 
+import auth from '@/apis/auth';
+
 @Component({
   components: {Avatar}
 })
 export default class Sidebar extends Vue {
-
+  logout() {
+    auth.logout().then((info: string) => {console.log(info);});
+  }
 }
 </script>
 

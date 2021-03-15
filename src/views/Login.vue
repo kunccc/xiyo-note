@@ -30,10 +30,10 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 
-const request = require('@/helpers/request.js').default;
-request('/auth/login', 'post', {
-  username: 'hunger', password: '12345dsa'
-}).then((data: {}) => {console.log(data);});
+import auth from '@/apis/auth';
+
+auth.getInfo()
+  .then((info: {}) => {console.log(info);});
 
 @Component
 export default class Login extends Vue {
@@ -75,7 +75,10 @@ export default class Login extends Vue {
     }
     this.register.isError = false;
     this.register.notice = '';
-    console.log(`start register..., username: ${this.register.username} , password: ${this.register.password}`);
+    auth.register({
+      username: this.register.username,
+      password: this.register.password
+    }).then((info: {}) => {console.log(info);});
   }
 
   onLogin() {
@@ -91,7 +94,10 @@ export default class Login extends Vue {
     }
     this.login.isError = false;
     this.login.notice = '';
-    console.log(`start login..., username: ${this.login.username} , password: ${this.login.password}`);
+    auth.login({
+      username: this.login.username,
+      password: this.login.password
+    }).then((info: {}) => {console.log(info);});
   }
 }
 </script>
