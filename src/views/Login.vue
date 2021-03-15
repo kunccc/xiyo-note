@@ -128,7 +128,7 @@ export default class Login extends Vue {
       display: flex;
       > .main {
         flex: 1;
-        background: $color-highlight url(//cloud.hunger-valley.com/17-12-13/38476998.jpg-middle) center center no-repeat;
+        background: $color-highlight url(../../public/background.jpg) center center no-repeat;
         background-size: contain;
       }
       > .form {
