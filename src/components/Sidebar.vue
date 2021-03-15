@@ -30,7 +30,7 @@ import auth from '@/apis/auth';
 })
 export default class Sidebar extends Vue {
   logout() {
-    auth.logout().then((info: string) => {console.log(info);});
+    auth.logout().then(() => {this.$router.push('login');});
   }
 }
 </script>

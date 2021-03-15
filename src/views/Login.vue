@@ -7,14 +7,14 @@
           <div class="form">
             <h3 @click="showRegister">创建账户</h3>
             <div :class="{show: isShowRegister}" class="register">
-              <input type="text" v-model="register.username" placeholder="用户名">
+              <input type="text" v-model="register.username" @keyup.enter="onRegister" placeholder="用户名">
               <input type="password" v-model="register.password" @keyup.enter="onRegister" placeholder="密码">
               <p :class="{error: register.isError}">{{ register.notice }}</p>
               <div class="button" @click="onRegister">创建账号</div>
             </div>
             <h3 @click="showLogin">登录</h3>
             <div :class="{show: isShowLogin}" class="login">
-              <input type="text" v-model="login.username" placeholder="输入用户名">
+              <input type="text" v-model="login.username" @keyup.enter="onLogin" placeholder="输入用户名">
               <input type="password" v-model="login.password" @keyup.enter="onLogin" placeholder="密码">
               <p :class="{error: login.isError}">{{ login.notice }}</p>
               <div class="button" @click="onLogin">登录</div>
@@ -73,12 +73,17 @@ export default class Login extends Vue {
       this.register.notice = '密码长度为 6~16 个字符';
       return;
     }
-    this.register.isError = false;
-    this.register.notice = '';
     auth.register({
       username: this.register.username,
       password: this.register.password
-    }).then((info: {}) => {console.log(info);});
+    }).then(() => {
+      this.register.isError = false;
+      this.register.notice = '';
+      this.$router.push('/notebook');
+    }).catch((info: { msg: string }) => {
+      this.register.isError = true;
+      this.register.notice = info.msg;
+    });
   }
 
   onLogin() {
@@ -92,12 +97,17 @@ export default class Login extends Vue {
       this.login.notice = '密码长度为 6~16 个字符';
       return;
     }
-    this.login.isError = false;
-    this.login.notice = '';
     auth.login({
       username: this.login.username,
       password: this.login.password
-    }).then((info: {}) => {console.log(info);});
+    }).then(() => {
+      this.login.isError = false;
+      this.login.notice = '';
+      this.$router.push('/notebooks');
+    }).catch((info: { msg: string }) => {
+      this.login.isError = true;
+      this.login.notice = info.msg;
+    });
   }
 }
 </script>
