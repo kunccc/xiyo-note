@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import auth from '@/apis/auth';
+import Auth from '@/apis/auth';
 import EventBus from '@/helpers/eventBus';
 
 @Component
@@ -70,7 +70,7 @@ export default class Login extends Vue {
       this.register.notice = '密码长度为 6~16 个字符';
       return;
     }
-    auth.register({
+    Auth.register({
       username: this.register.username,
       password: this.register.password
     }).then(() => {
@@ -95,7 +95,7 @@ export default class Login extends Vue {
       this.login.notice = '密码长度为 6~16 个字符';
       return;
     }
-    auth.login({
+    Auth.login({
       username: this.login.username,
       password: this.login.password
     }).then(() => {

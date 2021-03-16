@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Avatar from '@/components/Avatar.vue';
-import auth from '@/apis/auth';
+import Auth from '@/apis/auth';
 import EventBus from '@/helpers/eventBus';
 
 @Component({
@@ -30,7 +30,7 @@ import EventBus from '@/helpers/eventBus';
 })
 export default class Sidebar extends Vue {
   logout() {
-    auth.logout().then(() => {
+    Auth.logout().then(() => {
       this.$router.push('login');
       EventBus.$emit('isLogin', 'visitor');
     });

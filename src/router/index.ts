@@ -4,10 +4,15 @@ import Login from '@/views/Login.vue';
 import NotebookList from '@/views/NotebookList.vue';
 import NoteDetail from '@/views/NoteDetail.vue';
 import TrashDetail from '@/views/TrashDetail.vue';
+import NotFound from '@/components/NotFound.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
+  {
+    path: '/',
+    redirect: '/login'
+  },
   {
     path: '/login',
     component: Login
@@ -23,6 +28,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/trash/:noteId',
     component: TrashDetail
+  },
+  {
+    path: '*',
+    component: NotFound
   }
 ];
 
