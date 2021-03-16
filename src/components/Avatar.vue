@@ -1,15 +1,25 @@
 <template>
-  <span :title="user.username">{{ slug }}</span>
+  <span :title="username">{{ slug }}</span>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
+import auth from '@/apis/auth';
 
 @Component
 export default class Avatar extends Vue {
-  user = {username: 'hunger'};
-  slug = 'H';
+  username = 'visitor';
+
+  created() {
+    auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
+      if (res.isLogin) this.username = res.data.username;
+    });
+  }
+
+  get slug() {
+    return this.username.charAt(0);
+  }
 }
 </script>
 

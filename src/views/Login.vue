@@ -32,9 +32,6 @@ import {Component} from 'vue-property-decorator';
 
 import auth from '@/apis/auth';
 
-auth.getInfo()
-  .then((info: {}) => {console.log(info);});
-
 @Component
 export default class Login extends Vue {
   isShowLogin = true;
@@ -80,9 +77,9 @@ export default class Login extends Vue {
       this.register.isError = false;
       this.register.notice = '';
       this.$router.push('/notebook');
-    }).catch((info: { msg: string }) => {
+    }).catch((res: { msg: string }) => {
       this.register.isError = true;
-      this.register.notice = info.msg;
+      this.register.notice = res.msg;
     });
   }
 
@@ -104,9 +101,9 @@ export default class Login extends Vue {
       this.login.isError = false;
       this.login.notice = '';
       this.$router.push('/notebooks');
-    }).catch((info: { msg: string }) => {
+    }).catch((res: { msg: string }) => {
       this.login.isError = true;
-      this.login.notice = info.msg;
+      this.login.notice = res.msg;
     });
   }
 }
