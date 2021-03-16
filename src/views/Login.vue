@@ -29,8 +29,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-
 import auth from '@/apis/auth';
+import EventBus from '@/helpers/eventBus';
 
 @Component
 export default class Login extends Vue {
@@ -77,6 +77,7 @@ export default class Login extends Vue {
       this.register.isError = false;
       this.register.notice = '';
       this.$router.push('/notebook');
+      EventBus.$emit('isLogin', this.register.username);
     }).catch((res: { msg: string }) => {
       this.register.isError = true;
       this.register.notice = res.msg;
@@ -101,6 +102,7 @@ export default class Login extends Vue {
       this.login.isError = false;
       this.login.notice = '';
       this.$router.push('/notebooks');
+      EventBus.$emit('isLogin', this.login.username);
     }).catch((res: { msg: string }) => {
       this.login.isError = true;
       this.login.notice = res.msg;

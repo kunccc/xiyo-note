@@ -6,12 +6,14 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import auth from '@/apis/auth';
+import EventBus from '@/helpers/eventBus';
 
 @Component
 export default class Avatar extends Vue {
   username = 'visitor';
 
   created() {
+    EventBus.$on('isLogin', data => this.username = data);
     auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
       if (res.isLogin) this.username = res.data.username;
     });
