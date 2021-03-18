@@ -61,5 +61,10 @@ export default class Sidebar extends Vue {
     width: 100%;
     cursor: pointer;
   }
+  .icon {
+    width: 28px;
+    height: 32px;
+    fill: #fff
+  }
 }
 </style>

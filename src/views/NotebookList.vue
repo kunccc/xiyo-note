@@ -1,14 +1,28 @@
 <template>
   <div id="notebookList">
-    <h1>{{ msg }}</h1>
-    <ul>
-      <li>
-        <router-link to="/note/1">笔记本1</router-link>
-      </li>
-      <li>
-        <router-link to="/note/2">笔记本2</router-link>
-      </li>
-    </ul>
+    <header>
+      <a href="#" class="btn" @click.prevent="onCreate">
+        <Icon name="add"/>
+        新建笔记本
+      </a>
+    </header>
+    <main>
+      <div class="layout">
+        <h3>笔记本列表({{ notebooks.length }})</h3>
+        <div class="bookList">
+          <router-link v-for="notebook in notebooks" to="/note/1" class="notebook" :key="notebooks.indexOf(notebook)">
+            <div>
+              <Icon name="notebook"/>
+              {{ notebook.title }}
+              <span>{{ notebook.noteCounts }}</span>
+              <span class="action" @click.prevent="onEdit(notebook)">编辑</span>
+              <span class="action" @click.prevent="onDelete(notebook)">删除</span>
+              <span class="date">{{ notebook.friendlyCreatedAt }}</span>
+            </div>
+          </router-link>
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -16,21 +30,135 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Auth from '@/apis/auth';
+import Notebooks from '@/apis/notebooks';
 
 @Component
 export default class NotebookList extends Vue {
-  msg = '笔记本列表';
+  notebooks = [{}];
 
   created() {
-    Auth.getInfo().then(res => {
+    Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
+    Notebooks.getAll().then(res => {
+      this.notebooks = res.data;
+    });
+  }
+
+  onCreate() {
+    const title = window.prompt('创建笔记本');
+    if (title?.length === 0) {
+      alert('笔记本名不能为空');
+      return;
+    }
+    if (title !== null) {
+      Notebooks.addNotebook({title}).then((res: NewNotebook) => {
+        window.alert(res.msg);
+        this.notebooks.unshift(res.data);
+      });
+    }
+  }
+
+  onEdit(notebook: { title: string; id: string }) {
+    const title = window.prompt('修改标题', notebook.title);
+    if (title?.length === 0) {
+      alert('笔记本名不能为空');
+      return;
+    }
+    if (title !== null)
+      Notebooks.updateNotebook(notebook.id, {title}).then((res: { msg: string }) => {
+        alert(res.msg);
+        notebook.title = title;
+      });
+  }
+
+  onDelete(notebook: { id: string }) {
+    const isConfirm = window.confirm('您确定要删除吗');
+    if (isConfirm) {
+      Notebooks.deleteNotebook(notebook.id).then((res: { msg: string }) => {
+        this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
+        alert(res.msg);
+      });
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  color: red;
+#notebookList {
+  flex: 1;
+  .icon {
+    width: 20px;
+    height: 20px;
+    fill: #5e6266;
+    margin-right: 4px;
+  }
+  .btn {
+    display: flex;
+    align-items: center;
+    width: 96px;
+    color: #666;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  input {
+    width: 300px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 3px 5px;
+    outline: none;
+  }
+  header {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+  }
+  .layout {
+    max-width: 966px;
+    margin: 0 auto
+  }
+  main {
+    padding: 30px 40px;
+    h3 {
+      font-size: 12px;
+      color: #000;
+    }
+    .bookList {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+      background: #fff;
+      border-radius: 4px;
+      font-weight: bold;
+      span {
+        font-size: 12px;
+        color: #b3c0c8;
+      }
+    }
+    .date, .action {
+      float: right;
+      margin-right: 10px;
+    }
+    .notebook {
+      display: block;
+      cursor: pointer;
+      div {
+        line-height: 3em;
+        border-bottom: 1px solid #ebebeb;
+      }
+      .icon {
+        margin: 4.8px 0 -4.8px 10px;
+        transform: scale(.7);
+      }
+    }
+    a.notebook:hover {
+      background: #f7fafd;
+    }
+    .errorMsg {
+      font-size: 12px;
+      color: red;
+    }
+  }
 }
 </style>

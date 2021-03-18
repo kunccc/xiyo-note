@@ -15,11 +15,3 @@ export default class Icon extends Vue {
   @Prop() name!: string;
 }
 </script>
-
-<style lang="scss" scoped>
-.icon {
-  width: 28px;
-  height: 32px;
-  fill: #fff
-}
-</style>
