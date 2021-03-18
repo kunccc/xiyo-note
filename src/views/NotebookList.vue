@@ -52,7 +52,7 @@ export default class NotebookList extends Vue {
       return;
     }
     if (title !== null) {
-      Notebooks.addNotebook({title}).then((res: NewNotebook) => {
+      Notebooks.addNotebook({title}).then(res => {
         window.alert(res.msg);
         this.notebooks.unshift(res.data);
       });

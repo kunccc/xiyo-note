@@ -16,8 +16,10 @@ type NewNotebook = {
   data: {
     id: number;
     userId: number;
+    noteCounts: number;
     title: string;
     createdAt: Date;
     updatedAt: Date;
+    friendlyCreatedAt: string;
   };
 }
