@@ -14,7 +14,7 @@ export default class NoteDetail extends Vue {
   msg = '笔记详情页';
 
   created() {
-    Auth.getInfo().then(res => {
+    Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
   }

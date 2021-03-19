@@ -13,7 +13,7 @@ export default class Avatar extends Vue {
   username = 'visitor';
 
   created() {
-    EventBus.$on('isLogin', data => this.username = data);
+    EventBus.$on('isLogin', (data: string) => this.username = data);
     Auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
       if (res.isLogin) this.username = res.data.username;
     });
