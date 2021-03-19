@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import Icon from '@/components/Icon.vue';
 import {Message} from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false;
 
