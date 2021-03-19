@@ -4,10 +4,12 @@ import './registerServiceWorker';
 import router from './router';
 import store from './store';
 import Icon from '@/components/Icon.vue';
+import {Message} from 'element-ui';
 
 Vue.config.productionTip = false;
 
 Vue.component('Icon', Icon);
+Vue.component('Message', Message);
 
 new Vue({
   router,
