@@ -56,10 +56,7 @@ export default class NotebookList extends Vue {
       return Notebooks.addNotebook({title: value});
     }).then(res => {
       this.notebooks.unshift(res.data);
-      this.$message({
-        type: 'success',
-        message: res.msg
-      });
+      this.$message.success(res.msg);
     });
   }
 
@@ -77,10 +74,7 @@ export default class NotebookList extends Vue {
       return Notebooks.updateNotebook(notebook.id, {title});
     }).then(res => {
       notebook.title = title;
-      this.$message({
-        type: 'success',
-        message: res.msg
-      });
+      this.$message.success(res.msg);
     });
   }
 
@@ -93,10 +87,7 @@ export default class NotebookList extends Vue {
       return Notebooks.deleteNotebook(notebook.id);
     }).then(res => {
       this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
-      this.$message({
-        type: 'success',
-        message: res.msg
-      });
+      this.$message.success(res.msg);
     });
   }
 }

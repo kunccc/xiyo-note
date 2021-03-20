@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {Message} from 'element-ui'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.defaults.baseURL = 'https://note-server.hunger-valley.com'
@@ -16,9 +17,13 @@ export default function request(url, type = 'GET', data = {}) {
     else option.data = data
     axios(option).then(res => {
       if (res.status === 200) resolve(res.data)
-      else reject(res.data)
-    }).catch(() => {
-      reject({msg: '网络异常'})
+      else {
+        Message.error(res.data.msg)
+        reject(res.data)
+      }
+    }).catch(err => {
+      Message.error(err)
+      reject(err)
     })
   })
 }
