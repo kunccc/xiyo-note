@@ -9,7 +9,6 @@
 import Vue from 'vue'
 import {Component} from 'vue-property-decorator'
 import Sidebar from '@/components/Sidebar'
-
 @Component({
   components: {Sidebar}
 })

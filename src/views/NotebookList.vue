@@ -46,40 +46,58 @@ export default class NotebookList extends Vue {
   }
 
   onCreate() {
-    const title = window.prompt('创建笔记本');
-    if (title?.length === 0) {
-      alert('笔记本名不能为空');
-      return;
-    }
-    if (title !== null) {
-      Notebooks.addNotebook({title}).then(res => {
-        window.alert(res.msg);
-        this.notebooks.unshift(res.data);
+    this.$prompt('请输入笔记本标题', '创建笔记本', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPattern: /^.{1,30}$/,
+      inputErrorMessage: '标题不能为空，且不超过30个字符'
+    }).then((res: any) => {
+      const {value} = res;
+      return Notebooks.addNotebook({title: value});
+    }).then(res => {
+      this.notebooks.unshift(res.data);
+      this.$message({
+        type: 'success',
+        message: res.msg
       });
-    }
+    });
   }
 
   onEdit(notebook: { title: string; id: string }) {
-    const title = window.prompt('修改标题', notebook.title);
-    if (title?.length === 0) {
-      alert('笔记本名不能为空');
-      return;
-    }
-    if (title !== null)
-      Notebooks.updateNotebook(notebook.id, {title}).then((res: { msg: string }) => {
-        alert(res.msg);
-        notebook.title = title;
+    let title = '';
+    this.$prompt('请输入笔记本标题', '修改笔记本', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputPattern: /^.{1,30}$/,
+      inputValue: notebook.title,
+      inputErrorMessage: '标题不能为空，且不超过30个字符'
+    }).then((res: any) => {
+      const {value} = res;
+      title = value;
+      return Notebooks.updateNotebook(notebook.id, {title});
+    }).then(res => {
+      notebook.title = title;
+      this.$message({
+        type: 'success',
+        message: res.msg
       });
+    });
   }
 
   onDelete(notebook: { id: string }) {
-    const isConfirm = window.confirm('您确定要删除吗');
-    if (isConfirm) {
-      Notebooks.deleteNotebook(notebook.id).then((res: { msg: string }) => {
-        this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
-        alert(res.msg);
+    this.$confirm('您确定要删除吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      return Notebooks.deleteNotebook(notebook.id);
+    }).then(res => {
+      this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
+      this.$message({
+        type: 'success',
+        message: res.msg
       });
-    }
+    });
   }
 }
 </script>
