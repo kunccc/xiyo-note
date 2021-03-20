@@ -1,6 +1,6 @@
 <template>
   <div id="trash-detail">
-    <h1>{{ msg }} : {{ $route.params.noteId }}</h1>
+    <h1>noteId : {{ $route.query.noteId }}</h1>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default class TrashDetail extends Vue {
   msg = '回收站笔记详情页';
 
   created() {
-    Auth.getInfo().then((res: {isLogin: boolean}) => {
+    Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
   }

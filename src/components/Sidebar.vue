@@ -2,13 +2,13 @@
   <div id="sidebar">
     <Avatar/>
     <div class="link">
-      <router-link to="/note/1" title="笔记">
+      <router-link to="/note" title="笔记">
         <Icon name="detail"/>
       </router-link>
       <router-link to="/notebooks" title="笔记本">
         <Icon name="notebook"/>
       </router-link>
-      <router-link to="/trash/2" title="回收站">
+      <router-link to="/trash" title="回收站">
         <Icon name="delete"/>
       </router-link>
     </div>
