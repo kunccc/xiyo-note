@@ -23,3 +23,31 @@ type NewNotebook = {
     friendlyCreatedAt: string;
   };
 }
+type Note = {
+  data: [
+    {
+      id: number;
+      notebookId: number;
+      userId: number;
+      title: string;
+      content: string;
+      isDelete: boolean;
+      createdAt: Date;
+      updatedAt: Date;
+      friendlyUpdatedAt: string;
+    }
+  ];
+}
+type NewNote = {
+  msg: string;
+  data: {
+    id: number;
+    userId: number;
+    title: string;
+    content: string;
+    isDelete: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    friendlyUpdatedAt: string;
+  };
+}
