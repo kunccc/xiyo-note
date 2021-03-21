@@ -2,7 +2,7 @@
   <div class="note-sidebar">
     <el-dropdown class="notebook-title" @command="handleCommand" placement="bottom">
       <span class="el-dropdown-link">
-        我的笔记本1
+        {{ curBook.title }}
         <i class="el-icon-arrow-down"/>
       </span>
       <el-dropdown-menu slot="dropdown">
@@ -19,7 +19,7 @@
     </div>
     <ul class="notebook">
       <li v-for="note in notebook" :key="notebook.indexOf(note)">
-        <router-link :to="`/note?noteId=${note.id}`">
+        <router-link :to="`/note?noteId=${note.id}&notebookId=${curBook.id}`">
           <span class="date">{{ note.friendlyUpdatedAt }}</span>
           <span class="title">{{ note.title }}</span>
         </router-link>
@@ -38,19 +38,26 @@ import Notes from '@/apis/notes';
 export default class NoteSidebar extends Vue {
   notebooks = [{}];
   notebook = [{}];
+  curBook = {};
 
   created() {
     Notebooks.getAll().then((res: BookList) => {
       this.notebooks = res.data;
+      this.curBook = res.data.find(notebook => notebook.id.toString() === this.$route.query.notebookId) || res.data[0] || {};
+      return Notes.getAll(this.curBook.id);
+    }).then(res => {
+      this.notebook = res.data;
     });
   }
 
   handleCommand(notebookId: number | string) {
-    if (notebookId !== 'trash') {
-      Notes.getAll(notebookId).then(res => {
-        this.notebook = res.data;
-      });
+    if (notebookId === 'trash') {
+      return this.$router.push('trash');
     }
+    this.curBook = this.notebooks.find(notebook => notebook.id === notebookId);
+    Notes.getAll(notebookId).then(res => {
+      this.notebook = res.data;
+    });
   }
 }
 </script>
