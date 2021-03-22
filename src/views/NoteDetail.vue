@@ -1,20 +1,20 @@
 <template>
   <div id="note">
-    <NoteSidebar/>
+    <NoteSidebar @update:notebook="val => notebook = val"/>
     <div class="noteDetail">
       <div class="noteBar">
-        <span>创建时间：一天前 丨</span>
-        <span>更新时间：刚刚 丨</span>
-        <span>正在输入...</span>
+        <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>
+        <span>更新时间：{{ curNote.friendlyUpdatedAt }} 丨</span>
+        <span>{{ curNote.statusText }}</span>
         <Icon name="trash"/>
         <Icon name="magnify"/>
       </div>
       <div class="noteTitle">
-        <input type="text" placeholder="输入标题">
+        <input type="text" v-model="curNote.title" placeholder="输入标题">
       </div>
       <div class="editor">
-        <textarea placeholder="输入内容，支持 markdown 语法">
-        </textarea>
+        <textarea v-show="true" :value="curNote.content" placeholder="输入内容，支持 markdown 语法"/>
+        <div class="markdown" v-show="false"></div>
       </div>
     </div>
   </div>
@@ -22,20 +22,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {Component} from 'vue-property-decorator';
+import {Component, Watch} from 'vue-property-decorator';
 import Auth from '@/apis/auth';
 import NoteSidebar from '@/components/NoteSidebar.vue';
+import {Route} from 'vue-router';
 
 @Component({
   components: {NoteSidebar}
 })
 export default class NoteDetail extends Vue {
-  msg = '笔记详情页';
+  curNote = {};
+  notebook = [];
 
   created() {
     Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
+  }
+
+  @Watch('$route', {immediate: true})
+  onRouteChanged(route: Route) {
+    const id = parseInt(route.query.noteId as string);
+    this.curNote = this.notebook.find((note: { id: number }) => note.id === id) || {};
   }
 }
 </script>

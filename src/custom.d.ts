@@ -34,6 +34,7 @@ type Note = {
       isDelete: boolean;
       createdAt: Date;
       updatedAt: Date;
+      friendlyCreatedAt: string;
       friendlyUpdatedAt: string;
     }
   ];
@@ -48,6 +49,7 @@ type NewNote = {
     isDelete: boolean;
     createdAt: Date;
     updatedAt: Date;
+    friendlyCreatedAt: string;
     friendlyUpdatedAt: string;
   };
 }

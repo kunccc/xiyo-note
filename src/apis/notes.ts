@@ -1,5 +1,4 @@
 import {friendlyDate} from '@/helpers/util';
-import {createLogger} from 'vuex';
 
 const request = require('@/helpers/request.js').default;
 
@@ -16,6 +15,7 @@ export default {
       request(URL.GET.replace(':notebookId', notebookId.toString()))
         .then((res: Note) => {
           res.data.map(note => {
+            note.friendlyCreatedAt = friendlyDate(note.createdAt);
             note.friendlyUpdatedAt = friendlyDate(note.updatedAt);
             return note;
           }).sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1);

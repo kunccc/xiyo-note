@@ -36,9 +36,9 @@ import Notes from '@/apis/notes';
 
 @Component
 export default class NoteSidebar extends Vue {
-  notebooks = [{}];
+  notebooks = [{id: 0}];
   notebook = [{}];
-  curBook = {};
+  curBook = {id: 0};
 
   created() {
     Notebooks.getAll().then((res: BookList) => {
@@ -47,6 +47,7 @@ export default class NoteSidebar extends Vue {
       return Notes.getAll(this.curBook.id);
     }).then(res => {
       this.notebook = res.data;
+      this.$emit('update:notebook', this.notebook);
     });
   }
 
@@ -54,10 +55,14 @@ export default class NoteSidebar extends Vue {
     if (notebookId === 'trash') {
       return this.$router.push('trash');
     }
-    this.curBook = this.notebooks.find(notebook => notebook.id === notebookId);
-    Notes.getAll(notebookId).then(res => {
-      this.notebook = res.data;
-    });
+    const book = this.notebooks.find(notebook => notebook.id === notebookId);
+    if (book !== undefined) this.curBook = book;
+    if (typeof (notebookId) === 'number') {
+      Notes.getAll(notebookId).then(res => {
+        this.notebook = res.data;
+        this.$emit('update:notebook', this.notebook);
+      });
+    }
   }
 }
 </script>
@@ -65,7 +70,7 @@ export default class NoteSidebar extends Vue {
 <style lang="scss" scoped>
 @import "~@/assets/styles/helper.scss";
 .note-sidebar {
-  width: 300px;
+  width: 400px;
   background: #eee;
   position: relative;
   border-right: 1px solid #ccc;
