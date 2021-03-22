@@ -58,8 +58,8 @@ export default class NoteDetail extends Vue {
 
 <style lang="scss" scoped>
 #note {
-  width: 100%;
   display: flex;
+  flex: 1;
   background: #fff;
   overflow: hidden;
   .noteDetail {

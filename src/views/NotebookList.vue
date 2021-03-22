@@ -10,7 +10,8 @@
       <div class="layout">
         <h3>笔记本列表({{ notebooks.length }})</h3>
         <div class="bookList">
-          <router-link v-for="notebook in notebooks" :to="`/note?notebookId=${notebook.id}`" class="notebook" :key="notebooks.indexOf(notebook)">
+          <router-link v-for="notebook in notebooks" :to="`/note?notebookId=${notebook.id}`" class="notebook"
+                       :key="notebooks.indexOf(notebook)">
             <div>
               <Icon name="notebook"/>
               {{ notebook.title }}
@@ -97,8 +98,8 @@ export default class NotebookList extends Vue {
 #notebookList {
   flex: 1;
   .icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     fill: #5e6266;
     margin-right: 4px;
   }

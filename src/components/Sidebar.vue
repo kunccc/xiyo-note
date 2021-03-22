@@ -6,14 +6,14 @@
         <Icon name="detail"/>
       </router-link>
       <router-link to="/notebooks" title="笔记本">
-        <Icon name="notebook"/>
+        <Icon name="notebook" class="notebook"/>
       </router-link>
       <router-link to="/trash" title="回收站">
-        <Icon name="delete"/>
+        <Icon name="delete" class="delete"/>
       </router-link>
     </div>
     <div class="logout" @click="logout">
-      <Icon name="backto"/>
+      <Icon name="backto" class="backto"/>
     </div>
   </div>
 </template>
@@ -64,7 +64,16 @@ export default class Sidebar extends Vue {
   .icon {
     width: 28px;
     height: 32px;
-    fill: #fff
+    fill: #fff;
+    &.notebook {
+      transform: scale(.72);
+    }
+    &.delete {
+      transform: scale(.92);
+    }
+    &.backto {
+      transform: scale(.76);
+    }
   }
 }
 </style>
