@@ -33,6 +33,7 @@ import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Notebooks from '@/apis/notebooks';
 import Notes from '@/apis/notes';
+import EventBus from '@/helpers/eventBus';
 
 @Component
 export default class NoteSidebar extends Vue {
@@ -48,6 +49,7 @@ export default class NoteSidebar extends Vue {
     }).then(res => {
       this.notebook = res.data;
       this.$emit('update:notebook', this.notebook);
+      EventBus.$emit('update:notebook', this.notebook)
     });
   }
 
