@@ -62,18 +62,18 @@ export default class NoteDetail extends Vue {
     });
     this.updateNote = _.debounce(() => {
       Notes.updateNote(this.curNote.id, this.curNote.title, this.curNote.content)
-        .then(() => {this.status = '已保存';});
+          .then(() => {this.status = '已保存';});
     }, 1000);
   }
 
   deleteNote() {
     this.$confirm('您确定要删除吗').then(() => {
       Notes.deleteNote(this.curNote.id)
-        .then((res: { msg: string }) => {
-          this.$message.success(res.msg);
-          this.notebook.splice(this.notebook.indexOf(this.curNote), 1);
-          this.$router.replace('/note');
-        });
+          .then((res: { msg: string }) => {
+            this.$message.success(res.msg);
+            this.notebook.splice(this.notebook.indexOf(this.curNote), 1);
+            this.$router.replace('/note');
+          });
     });
   }
 }
