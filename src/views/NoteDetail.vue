@@ -3,7 +3,7 @@
     <NoteSidebar @update:notebook="val => notebook = val"/>
     <div class="noteDetail">
       <div class="empty" v-show="!curNote.id">请选择笔记</div>
-      <div v-show="curNote.id">
+      <div v-show="curNote.id" class="wrapper">
         <div class="noteBar">
           <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>
           <span>更新时间：{{ curNote.friendlyUpdatedAt }} 丨</span>
@@ -11,16 +11,18 @@
           <span @click="deleteNote">
             <Icon name="trash"/>
           </span>
-          <Icon name="magnify"/>
+          <span @click="isShowPreview = !isShowPreview">
+            <Icon name="magnify"/>
+          </span>
         </div>
         <div class="noteTitle">
           <input type="text" v-model="curNote.title" @input="updateNote" @keydown="status = '正在输入...'"
                  placeholder="输入标题">
         </div>
         <div class="editor">
-          <textarea v-show="true" v-model="curNote.content" @input="updateNote" @keydown="status = '正在输入...'"
+          <textarea v-show="!isShowPreview" v-model="curNote.content" @input="updateNote" @keydown="status = '正在输入...'"
                     placeholder="输入内容，支持 markdown 语法"/>
-          <div class="markdown" v-show="false"></div>
+          <div class="markdown" v-show="isShowPreview" v-html="previewContent"/>
         </div>
       </div>
     </div>
@@ -36,6 +38,9 @@ import {Route} from 'vue-router';
 import EventBus from '@/helpers/eventBus';
 import Notes from '@/apis/notes';
 import _ from 'lodash';
+import MarkdownIt from 'markdown-it';
+
+const md = new MarkdownIt();
 
 @Component({
   components: {NoteSidebar}
@@ -44,6 +49,7 @@ export default class NoteDetail extends Vue {
   curNote = {id: 0, title: '', content: ''};
   notebook = [{id: 0, title: '', content: ''}];
   status = '已保存';
+  isShowPreview = false;
   updateNote = () => console.log('hi');
 
   @Watch('$route', {immediate: true})
@@ -67,7 +73,7 @@ export default class NoteDetail extends Vue {
   }
 
   deleteNote() {
-    this.$confirm('您确定要删除吗').then(() => {
+    this.$confirm('您确定要删除当前笔记吗？').then(() => {
       Notes.deleteNote(this.curNote.id)
           .then((res: { msg: string }) => {
             this.$message.success(res.msg);
@@ -75,6 +81,10 @@ export default class NoteDetail extends Vue {
             this.$router.replace('/note');
           });
     });
+  }
+
+  get previewContent() {
+    return md.render(this.curNote.content);
   }
 }
 </script>
@@ -87,6 +97,9 @@ export default class NoteDetail extends Vue {
   overflow: hidden;
   .noteDetail {
     width: 100%;
+    .wrapper {
+      height: 100%;
+    }
     .empty {
       font-size: 50px;
       color: #ccc;
