@@ -12,7 +12,7 @@
         <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <span class="btn add-note">添加笔记</span>
+    <span class="btn add-note" @click="addNote">添加笔记</span>
     <div class="menu">
       <div class="time">更新时间</div>
       <div class="title">标题</div>
@@ -49,7 +49,7 @@ export default class NoteSidebar extends Vue {
     }).then(res => {
       this.notebook = res.data;
       this.$emit('update:notebook', this.notebook);
-      EventBus.$emit('update:notebook', this.notebook)
+      EventBus.$emit('update:notebook', this.notebook);
     });
   }
 
@@ -65,6 +65,13 @@ export default class NoteSidebar extends Vue {
         this.$emit('update:notebook', this.notebook);
       });
     }
+  }
+
+  addNote() {
+    Notes.addNote(this.curBook.id).then(res => {
+      this.$message.success(res.msg);
+      this.notebook.unshift(res.data);
+    });
   }
 }
 </script>

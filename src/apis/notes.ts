@@ -14,11 +14,11 @@ export default {
     return new Promise<Note>((resolve, reject) => {
       request(URL.GET.replace(':notebookId', notebookId.toString()))
         .then((res: Note) => {
-          res.data.map(note => {
+          res.data.forEach(note => {
             note.friendlyCreatedAt = friendlyDate(note.createdAt);
             note.friendlyUpdatedAt = friendlyDate(note.updatedAt);
-            return note;
-          }).sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1);
+          });
+          res.data.sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1);
           resolve(res);
         }).catch((err: {}) => reject(err));
     });
@@ -27,6 +27,8 @@ export default {
     return new Promise<NewNote>((resolve, reject) => {
       request(URL.ADD.replace(':notebookId', notebookId.toString()), 'POST', {title, content})
         .then((res: NewNote) => {
+          res.data.friendlyCreatedAt = friendlyDate(res.data.createdAt);
+          res.data.friendlyUpdatedAt = friendlyDate(res.data.updatedAt);
           resolve(res);
         }).catch((err: {}) => reject(err));
     });

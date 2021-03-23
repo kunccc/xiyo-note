@@ -7,15 +7,19 @@
         <div class="noteBar">
           <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>
           <span>更新时间：{{ curNote.friendlyUpdatedAt }} 丨</span>
-          <span>{{ curNote.statusText }}</span>
-          <Icon name="trash"/>
+          <span>{{ status }}</span>
+          <span @click="deleteNote">
+            <Icon name="trash"/>
+          </span>
           <Icon name="magnify"/>
         </div>
         <div class="noteTitle">
-          <input type="text" v-model="curNote.title" placeholder="输入标题">
+          <input type="text" v-model="curNote.title" @input="updateNote" @keydown="status = '正在输入...'"
+                 placeholder="输入标题">
         </div>
         <div class="editor">
-          <textarea v-show="true" v-model="curNote.content" placeholder="输入内容，支持 markdown 语法"/>
+          <textarea v-show="true" v-model="curNote.content" @input="updateNote" @keydown="status = '正在输入...'"
+                    placeholder="输入内容，支持 markdown 语法"/>
           <div class="markdown" v-show="false"></div>
         </div>
       </div>
@@ -30,13 +34,23 @@ import Auth from '@/apis/auth';
 import NoteSidebar from '@/components/NoteSidebar.vue';
 import {Route} from 'vue-router';
 import EventBus from '@/helpers/eventBus';
+import Notes from '@/apis/notes';
+import _ from 'lodash';
 
 @Component({
   components: {NoteSidebar}
 })
 export default class NoteDetail extends Vue {
-  curNote = {};
-  notebook = [];
+  curNote = {id: 0, title: '', content: ''};
+  notebook = [{id: 0, title: '', content: ''}];
+  status = '已保存';
+  updateNote = () => console.log('hi');
+
+  @Watch('$route', {immediate: true})
+  onRouteChanged(route: Route) {
+    const id = parseInt(route.query.noteId as string);
+    this.curNote = this.notebook.find((note: { id: number }) => note.id === id) || {id: 0, title: '', content: ''};
+  }
 
   created() {
     Auth.getInfo().then((res: { isLogin: boolean }) => {
@@ -44,14 +58,23 @@ export default class NoteDetail extends Vue {
     });
     EventBus.$once('update:notebook', (val: []) => {
       const id = parseInt(this.$route.query.noteId as string);
-      this.curNote = val.find((note: { id: number }) => note.id === id) || {};
+      this.curNote = val.find((note: { id: number }) => note.id === id) || {id: 0, title: '', content: ''};
     });
+    this.updateNote = _.debounce(() => {
+      Notes.updateNote(this.curNote.id, this.curNote.title, this.curNote.content)
+        .then(() => {this.status = '已保存';});
+    }, 1000);
   }
 
-  @Watch('$route', {immediate: true})
-  onRouteChanged(route: Route) {
-    const id = parseInt(route.query.noteId as string);
-    this.curNote = this.notebook.find((note: { id: number }) => note.id === id) || {};
+  deleteNote() {
+    this.$confirm('您确定要删除吗').then(() => {
+      Notes.deleteNote(this.curNote.id)
+        .then((res: { msg: string }) => {
+          this.$message.success(res.msg);
+          this.notebook.splice(this.notebook.indexOf(this.curNote), 1);
+          this.$router.replace('/note');
+        });
+    });
   }
 }
 </script>
