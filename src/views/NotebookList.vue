@@ -31,19 +31,28 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Auth from '@/apis/auth';
-import Notebooks from '@/apis/notebooks';
+import {mapActions} from 'vuex';
 
-@Component
+@Component({
+  methods: {
+    ...mapActions([
+      'getNotebooks',
+      'addNotebook',
+      'updateNotebook',
+      'deleteNotebook'
+    ])
+  }
+})
 export default class NotebookList extends Vue {
-  notebooks = [{}];
+  get notebooks() {
+    return this.$store.getters.notebooks;
+  }
 
   created() {
     Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
-    Notebooks.getAll().then(res => {
-      this.notebooks = res.data;
-    });
+    this.$store.dispatch('getNotebooks');
   }
 
   onCreate() {
@@ -52,30 +61,20 @@ export default class NotebookList extends Vue {
       cancelButtonText: '取消',
       inputPattern: /^.{1,30}$/,
       inputErrorMessage: '标题不能为空，且不超过30个字符'
-    }).then((res: any) => {
-      const {value} = res;
-      return Notebooks.addNotebook({title: value});
-    }).then(res => {
-      this.notebooks.unshift(res.data);
-      this.$message.success(res.msg);
+    }).then(({value}) => {
+      this.addNotebook({title: value});
     });
   }
 
   onEdit(notebook: { title: string; id: string }) {
-    let title = '';
     this.$prompt('请输入笔记本标题', '修改笔记本', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       inputPattern: /^.{1,30}$/,
       inputValue: notebook.title,
       inputErrorMessage: '标题不能为空，且不超过30个字符'
-    }).then((res: any) => {
-      const {value} = res;
-      title = value;
-      return Notebooks.updateNotebook(notebook.id, {title});
-    }).then(res => {
-      notebook.title = title;
-      this.$message.success(res.msg);
+    }).then(({value}) => {
+      this.updateNotebook({notebookId: notebook.id, title: value});
     });
   }
 
@@ -85,10 +84,7 @@ export default class NotebookList extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      return Notebooks.deleteNotebook(notebook.id);
-    }).then(res => {
-      this.notebooks.splice(this.notebooks.indexOf(notebook), 1);
-      this.$message.success(res.msg);
+      this.deleteNotebook({notebookId: notebook.id});
     });
   }
 }

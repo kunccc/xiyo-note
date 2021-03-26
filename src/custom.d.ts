@@ -53,3 +53,16 @@ type NewNote = {
     friendlyUpdatedAt: string;
   };
 }
+type State = {
+  notebooks: [
+    {
+      id: number;
+      userId: number;
+      noteCounts: number;
+      title: string;
+      createdAt: Date;
+      updatedAt: Date;
+      friendlyCreatedAt: string;
+    }
+  ];
+}
