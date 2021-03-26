@@ -44,6 +44,11 @@ import {mapActions} from 'vuex';
   }
 })
 export default class NotebookList extends Vue {
+  getNotebooks!: Function;
+  addNotebook!: Function;
+  updateNotebook!: Function;
+  deleteNotebook!: Function;
+
   get notebooks() {
     return this.$store.getters.notebooks;
   }
@@ -52,7 +57,7 @@ export default class NotebookList extends Vue {
     Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
-    this.$store.dispatch('getNotebooks');
+    this.getNotebooks();
   }
 
   onCreate() {
@@ -61,7 +66,8 @@ export default class NotebookList extends Vue {
       cancelButtonText: '取消',
       inputPattern: /^.{1,30}$/,
       inputErrorMessage: '标题不能为空，且不超过30个字符'
-    }).then(({value}) => {
+    }).then((res: any) => {
+      const {value} = res;
       this.addNotebook({title: value});
     });
   }
@@ -73,7 +79,8 @@ export default class NotebookList extends Vue {
       inputPattern: /^.{1,30}$/,
       inputValue: notebook.title,
       inputErrorMessage: '标题不能为空，且不超过30个字符'
-    }).then(({value}) => {
+    }).then((res: any) => {
+      const {value} = res;
       this.updateNotebook({notebookId: notebook.id, title: value});
     });
   }

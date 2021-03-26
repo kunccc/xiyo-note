@@ -12,7 +12,7 @@
         <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <span class="btn add-note" @click="addNote">添加笔记</span>
+    <span class="btn add-note" @click="onAddNote">添加笔记</span>
     <div class="menu">
       <div class="time">更新时间</div>
       <div class="title">标题</div>
@@ -31,25 +31,36 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import Notebooks from '@/apis/notebooks';
-import Notes from '@/apis/notes';
-import EventBus from '@/helpers/eventBus';
+import {mapGetters, mapActions} from 'vuex';
 
-@Component
+@Component({
+  methods: {
+    ...mapActions([
+      'getNotebooks',
+      'getNotebook',
+      'addNote'
+    ])
+  },
+  computed: {
+    ...mapGetters([
+      'notebooks',
+      'notebook',
+      'curBook'
+    ])
+  }
+})
 export default class NoteSidebar extends Vue {
-  notebooks = [{id: 0}];
-  notebook = [{}];
-  curBook = {id: 0};
+  notebooks!: [];
+  notebook!: {};
+  curBook!: { id: number };
+  getNotebooks!: Function;
+  getNotebook!: Function;
+  addNote!: Function;
 
   created() {
-    Notebooks.getAll().then((res: BookList) => {
-      this.notebooks = res.data;
-      this.curBook = res.data.find(notebook => notebook.id.toString() === this.$route.query.notebookId) || res.data[0] || {};
-      return Notes.getAll(this.curBook.id);
-    }).then(res => {
-      this.notebook = res.data;
-      this.$emit('update:notebook', this.notebook);
-      EventBus.$emit('update:notebook', this.notebook);
+    this.getNotebooks().then(() => {
+      this.$store.commit('setCurBook', {curBookId: parseInt(this.$route.query.notebookId as string)});
+      this.getNotebook({notebookId: this.curBook.id});
     });
   }
 
@@ -57,21 +68,12 @@ export default class NoteSidebar extends Vue {
     if (notebookId === 'trash') {
       return this.$router.push('trash');
     }
-    const book = this.notebooks.find(notebook => notebook.id === notebookId);
-    if (book !== undefined) this.curBook = book;
-    if (typeof (notebookId) === 'number') {
-      Notes.getAll(notebookId).then(res => {
-        this.notebook = res.data;
-        this.$emit('update:notebook', this.notebook);
-      });
-    }
+    this.$store.commit('setCurBook', {curBookId: notebookId});
+    this.getNotebook({notebookId});
   }
 
-  addNote() {
-    Notes.addNote(this.curBook.id).then(res => {
-      this.$message.success(res.msg);
-      this.notebook.unshift(res.data);
-    });
+  onAddNote() {
+    this.addNote({notebookId: this.curBook.id});
   }
 }
 </script>
