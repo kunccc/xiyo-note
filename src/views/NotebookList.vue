@@ -30,7 +30,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import Auth from '@/apis/auth';
 import {mapActions} from 'vuex';
 
 @Component({
@@ -39,7 +38,8 @@ import {mapActions} from 'vuex';
       'getNotebooks',
       'addNotebook',
       'updateNotebook',
-      'deleteNotebook'
+      'deleteNotebook',
+      'checkLogin'
     ])
   }
 })
@@ -48,15 +48,14 @@ export default class NotebookList extends Vue {
   addNotebook!: Function;
   updateNotebook!: Function;
   deleteNotebook!: Function;
+  checkLogin!: Function;
 
   get notebooks() {
     return this.$store.getters.notebooks;
   }
 
   created() {
-    Auth.getInfo().then((res: { isLogin: boolean }) => {
-      if (!res.isLogin) this.$router.push('/login');
-    });
+    this.checkLogin('/login');
     this.getNotebooks();
   }
 

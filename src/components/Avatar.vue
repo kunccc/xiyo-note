@@ -5,22 +5,28 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import Auth from '@/apis/auth';
-import EventBus from '@/helpers/eventBus';
+import {mapActions, mapGetters} from 'vuex';
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters([
+      'username',
+      'slug'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'checkLogin'
+    ])
+  }
+})
 export default class Avatar extends Vue {
-  username = 'visitor';
+  username!: string;
+  slug!: string;
+  checkLogin!: Function;
 
   created() {
-    EventBus.$on('isLogin', (data: string) => this.username = data);
-    Auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
-      if (res.isLogin) this.username = res.data.username;
-    });
-  }
-
-  get slug() {
-    return this.username.charAt(0);
+    this.checkLogin().then();
   }
 }
 </script>

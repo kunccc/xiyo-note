@@ -33,7 +33,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Watch} from 'vue-property-decorator';
-import Auth from '@/apis/auth';
 import NoteSidebar from '@/components/NoteSidebar.vue';
 import {Route} from 'vue-router';
 import _ from 'lodash';
@@ -53,7 +52,8 @@ const md = new MarkdownIt();
   methods: {
     ...mapActions([
       'updateNote',
-      'deleteNote'
+      'deleteNote',
+      'checkLogin'
     ]),
     ...mapMutations([
       'setCurNote'
@@ -69,6 +69,7 @@ export default class NoteDetail extends Vue {
   updateNote!: Function;
   deleteNote!: Function;
   setCurNote!: Function;
+  checkLogin!: Function;
 
   @Watch('$route', {immediate: true})
   onRouteChanged(route: Route) {
@@ -76,9 +77,7 @@ export default class NoteDetail extends Vue {
   }
 
   created() {
-    Auth.getInfo().then((res: { isLogin: boolean }) => {
-      if (!res.isLogin) this.$router.push('/login');
-    });
+    this.checkLogin('/login');
     this.onUpdateNote = _.debounce(() => {
       this.updateNote({noteId: this.curNote.id, title: this.curNote.title, content: this.curNote.content})
         .then(() => {this.status = '已保存';})

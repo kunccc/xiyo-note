@@ -29,10 +29,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import Auth from '@/apis/auth';
-import EventBus from '@/helpers/eventBus';
+import {mapActions} from 'vuex';
 
-@Component
+@Component({
+  methods: {
+    ...mapActions([
+      'loginUser',
+      'registerUser'
+    ])
+  }
+})
 export default class Login extends Vue {
   isShowLogin = true;
   isShowRegister = false;
@@ -48,6 +54,8 @@ export default class Login extends Vue {
     notice: '创建账号后，请记住用户名和密码',
     isError: false
   };
+  loginUser!: Function;
+  registerUser!: Function;
 
   showLogin() {
     this.isShowLogin = true;
@@ -70,14 +78,13 @@ export default class Login extends Vue {
       this.register.notice = '密码长度为 6~16 个字符';
       return;
     }
-    Auth.register({
+    this.registerUser({
       username: this.register.username,
       password: this.register.password
     }).then(() => {
       this.register.isError = false;
       this.register.notice = '';
       this.$router.push('/notebook');
-      EventBus.$emit('isLogin', this.register.username);
     }).catch((res: { msg: string }) => {
       this.register.isError = true;
       this.register.notice = res.msg;
@@ -95,14 +102,13 @@ export default class Login extends Vue {
       this.login.notice = '密码长度为 6~16 个字符';
       return;
     }
-    Auth.login({
+    this.loginUser({
       username: this.login.username,
       password: this.login.password
     }).then(() => {
       this.login.isError = false;
       this.login.notice = '';
       this.$router.push('/notebooks');
-      EventBus.$emit('isLogin', this.login.username);
     }).catch((res: { msg: string }) => {
       this.login.isError = true;
       this.login.notice = res.msg;
