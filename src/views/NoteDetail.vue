@@ -8,7 +8,7 @@
           <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>
           <span>更新时间：{{ curNote.friendlyUpdatedAt }} 丨</span>
           <span>{{ status }}</span>
-          <span @click="deleteNote">
+          <span @click="onDeleteNote">
             <Icon name="trash"/>
           </span>
           <span @click="isShowPreview = !isShowPreview">
@@ -16,11 +16,12 @@
           </span>
         </div>
         <div class="noteTitle">
-          <input type="text" v-model="curNote.title" @input="updateNote" @keydown="status = '正在输入...'"
+          <input type="text" v-model="curNote.title" @input="onUpdateNote" @keydown="status = '正在输入...'"
                  placeholder="输入标题">
         </div>
         <div class="editor">
-          <textarea v-show="!isShowPreview" v-model="curNote.content" @input="updateNote" @keydown="status = '正在输入...'"
+          <textarea v-show="!isShowPreview" v-model="curNote.content" @input="onUpdateNote"
+                    @keydown="status = '正在输入...'"
                     placeholder="输入内容，支持 markdown 语法"/>
           <div class="markdown" v-show="isShowPreview" v-html="previewContent"/>
         </div>
@@ -35,56 +36,67 @@ import {Component, Watch} from 'vue-property-decorator';
 import Auth from '@/apis/auth';
 import NoteSidebar from '@/components/NoteSidebar.vue';
 import {Route} from 'vue-router';
-import EventBus from '@/helpers/eventBus';
-import Notes from '@/apis/notes';
 import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
 
 const md = new MarkdownIt();
 
 @Component({
-  components: {NoteSidebar}
+  components: {NoteSidebar},
+  computed: {
+    ...mapGetters([
+      'notebook',
+      'curNote'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'updateNote',
+      'deleteNote'
+    ]),
+    ...mapMutations([
+      'setCurNote'
+    ])
+  }
 })
 export default class NoteDetail extends Vue {
-  curNote = {id: 0, title: '', content: ''};
-  notebook = [{id: 0, title: '', content: ''}];
+  curNote!: { id: number; title: string; content: string };
+  notebook!: [];
   status = '已保存';
   isShowPreview = false;
-  updateNote = () => console.log('hi');
+  onUpdateNote!: Function;
+  updateNote!: Function;
+  deleteNote!: Function;
+  setCurNote!: Function;
 
   @Watch('$route', {immediate: true})
   onRouteChanged(route: Route) {
-    const id = parseInt(route.query.noteId as string);
-    this.curNote = this.notebook.find((note: { id: number }) => note.id === id) || {id: 0, title: '', content: ''};
+    this.setCurNote({curNoteId: route.query.noteId});
   }
 
   created() {
     Auth.getInfo().then((res: { isLogin: boolean }) => {
       if (!res.isLogin) this.$router.push('/login');
     });
-    EventBus.$once('update:notebook', (val: []) => {
-      const id = parseInt(this.$route.query.noteId as string);
-      this.curNote = val.find((note: { id: number }) => note.id === id) || {id: 0, title: '', content: ''};
-    });
-    this.updateNote = _.debounce(() => {
-      Notes.updateNote(this.curNote.id, this.curNote.title, this.curNote.content)
-          .then(() => {this.status = '已保存';});
-    }, 1000);
+    this.onUpdateNote = _.debounce(() => {
+      this.updateNote({noteId: this.curNote.id, title: this.curNote.title, content: this.curNote.content})
+        .then(() => {this.status = '已保存';})
+        .catch(() => {this.status = '保存出错';});
+    }, 500);
   }
 
-  deleteNote() {
+  onDeleteNote() {
     this.$confirm('您确定要删除当前笔记吗？').then(() => {
-      Notes.deleteNote(this.curNote.id)
-          .then((res: { msg: string }) => {
-            this.$message.success(res.msg);
-            this.notebook.splice(this.notebook.indexOf(this.curNote), 1);
-            this.$router.replace('/note');
-          });
+      this.deleteNote({noteId: this.curNote.id})
+        .then(() => {
+          this.$router.replace('/note');
+        });
     });
   }
 
   get previewContent() {
-    return md.render(this.curNote.content);
+    return md.render(this.curNote.content || '');
   }
 }
 </script>

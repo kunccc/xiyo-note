@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import {mapGetters, mapActions} from 'vuex';
+import {mapGetters, mapActions, mapMutations} from 'vuex';
 
 @Component({
   methods: {
@@ -39,6 +39,10 @@ import {mapGetters, mapActions} from 'vuex';
       'getNotebooks',
       'getNotebook',
       'addNote'
+    ]),
+    ...mapMutations([
+      'setCurBook',
+      'setCurNote'
     ])
   },
   computed: {
@@ -56,11 +60,15 @@ export default class NoteSidebar extends Vue {
   getNotebooks!: Function;
   getNotebook!: Function;
   addNote!: Function;
+  setCurBook!: Function;
+  setCurNote!: Function;
 
   created() {
     this.getNotebooks().then(() => {
-      this.$store.commit('setCurBook', {curBookId: parseInt(this.$route.query.notebookId as string)});
-      this.getNotebook({notebookId: this.curBook.id});
+      this.setCurBook({curBookId: parseInt(this.$route.query.notebookId as string)});
+      return this.getNotebook({notebookId: this.curBook.id});
+    }).then(() => {
+      this.setCurNote({curNoteId: parseInt(this.$route.query.noteId as string)});
     });
   }
 
@@ -68,7 +76,7 @@ export default class NoteSidebar extends Vue {
     if (notebookId === 'trash') {
       return this.$router.push('trash');
     }
-    this.$store.commit('setCurBook', {curBookId: notebookId});
+    this.setCurBook({curBookId: notebookId});
     this.getNotebook({notebookId});
   }
 

@@ -3,12 +3,16 @@ import {ActionTree} from 'vuex';
 import {Message} from 'element-ui';
 
 const state = {
-  notebook: [],
-  curNote: {}
+  notebook: null,
+  curNoteId: null
 };
 const getters = {
-  notebook: (state: { notebook: [] }) => state.notebook,
-  curNote: (state: { curNote: {} }) => state.curNote
+  notebook: (state: { notebook: [] }) => state.notebook || [],
+  curNote: (state: { notebook: { id: number }[]; curNoteId: number }) => {
+    if (!Array.isArray(state.notebook)) return {};
+    if (!state.curNoteId) return state.notebook[0] || {};
+    return state.notebook.find(note => note.id === state.curNoteId);
+  }
 };
 const mutations = {
   setNotebook(state: { notebook: [] }, payload: { notebook: [] }) {
@@ -23,28 +27,29 @@ const mutations = {
   },
   deleteNote(state: { notebook: { id: number }[] }, payload: { noteId: number }) {
     state.notebook.filter(note => note.id !== payload.noteId);
+  },
+  setCurNote(state: { curNoteId: number }, payload: { curNoteId: string }) {
+    state.curNoteId = parseInt(payload.curNoteId);
   }
 };
 const actions: ActionTree<Function, {}> = {
   getNotebook({commit}, {notebookId}) {
-    Notes.getAll(notebookId).then(res => {
+    return Notes.getAll(notebookId).then(res => {
       commit('setNotebook', {notebook: res.data});
     });
   },
   addNote({commit}, {notebookId, title, content}) {
-    Notes.addNote(notebookId, {title, content}).then(res => {
+    return Notes.addNote(notebookId, {title, content}).then(res => {
       commit('addNote', {note: res.data});
-      Message.success(res.msg);
     });
   },
   updateNote({commit}, {noteId, title, content}) {
-    Notes.updateNote(noteId, title, content).then((res: { msg: string }) => {
+    return Notes.updateNote(noteId, title, content).then(() => {
       commit('updateNote', {noteId});
-      Message.success(res.msg);
     });
   },
   deleteNote({commit}, {noteId}) {
-    Notes.deleteNote(noteId).then((res: { msg: string }) => {
+    return Notes.deleteNote(noteId).then((res: { msg: string }) => {
       commit('deleteNote', {noteId});
       Message.success(res.msg);
     });
