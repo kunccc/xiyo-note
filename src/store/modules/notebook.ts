@@ -33,8 +33,7 @@ const mutations = {
   }
 };
 const actions: ActionTree<any, {}> = {
-  getNotebooks({commit, state}) {
-    if (state.notebooks) return Promise.resolve();
+  getNotebooks({commit}) {
     return Notebooks.getAll().then(res => {
       commit('setNotebooks', {notebooks: res.data});
     });

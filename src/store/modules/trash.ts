@@ -9,7 +9,7 @@ const state = {
 const getters = {
   trashNotes: (state: { trashNotes: [] }) => state.trashNotes || [],
   curTrashNote: (state: { trashNotes: []; curTrashNoteId: number }, getters: { trashNotes: {}[] }) => {
-    if (!state.trashNotes) return getters.trashNotes[0] || {};
+    if (!state.curTrashNoteId) return getters.trashNotes[0] || {};
     return state.trashNotes.find((note: { id: number }) => note.id === state.curTrashNoteId) || {};
   },
   belongTo: (state: {}, getters: { curTrashNote: { notebookId: number } }, rootState: {}, rootGetters: { notebooks: { id: number; title: string }[] }) => {
@@ -20,9 +20,6 @@ const getters = {
 const mutations = {
   setTrashNotes(state: { trashNotes: [] }, payload: { trashNotes: [] }) {
     state.trashNotes = payload.trashNotes;
-  },
-  addTrashNote(state: { trashNotes: {}[] }, payload: { note: {} }) {
-    state.trashNotes.unshift(payload.note);
   },
   deleteTrashNote(state: { trashNotes: { id: number }[] }, payload: { noteId: number }) {
     state.trashNotes = state.trashNotes.filter(note => note.id !== payload.noteId);

@@ -49,14 +49,16 @@ import {mapGetters, mapActions, mapMutations} from 'vuex';
     ...mapGetters([
       'notebooks',
       'notebook',
-      'curBook'
+      'curBook',
+      'curNote'
     ])
   }
 })
 export default class NoteSidebar extends Vue {
   notebooks!: [];
   notebook!: {};
-  curBook!: { id: number };
+  curBook!: { id: number; title: string };
+  curNote!: { id: number };
   getNotebooks!: Function;
   getNotebook!: Function;
   addNote!: Function;
@@ -69,6 +71,15 @@ export default class NoteSidebar extends Vue {
       return this.getNotebook({notebookId: this.curBook.id});
     }).then(() => {
       this.setCurNote({curNoteId: parseInt(this.$route.query.noteId as string)});
+      if (!this.$route.query.noteId) {
+        this.$router.replace({
+          path: '/note',
+          query: {
+            noteId: (this.curNote.id).toString(),
+            notebookId: (this.curBook.id).toString()
+          }
+        });
+      }
     });
   }
 
@@ -77,7 +88,16 @@ export default class NoteSidebar extends Vue {
       return this.$router.push('trash');
     }
     this.setCurBook({curBookId: notebookId});
-    this.getNotebook({notebookId});
+    this.getNotebook({notebookId}).then(() => {
+      this.setCurNote({});
+      this.$router.replace({
+        path: '/note',
+        query: {
+          noteId: (this.curNote.id).toString(),
+          notebookId: (this.curBook.id).toString()
+        }
+      });
+    });
   }
 
   onAddNote() {

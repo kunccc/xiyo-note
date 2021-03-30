@@ -72,7 +72,7 @@ export default class TrashDetail extends Vue {
   setCurTrashNote!: Function;
   getNotebooks!: Function;
 
-  @Watch('$route', {immediate: true})
+  @Watch('$route')
   onRouteChanged(route: Route) {
     this.setCurTrashNote({noteId: route.query.noteId});
   }
@@ -82,6 +82,12 @@ export default class TrashDetail extends Vue {
     this.getNotebooks();
     this.getTrashNotes().then(() => {
       this.setCurTrashNote({noteId: this.$route.query.noteId});
+      if (!this.$route.query.noteId) {
+        this.$router.replace({
+          path: 'trash',
+          query: {noteId: (this.curTrashNote.id).toString()}
+        });
+      }
     });
   }
 
@@ -168,6 +174,7 @@ export default class TrashDetail extends Vue {
     }
     .action {
       float: right;
+      margin-left: 12px;
     }
     .noteTitle {
       font-size: 20px;

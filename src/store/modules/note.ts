@@ -11,7 +11,7 @@ const getters = {
   curNote: (state: { notebook: { id: number }[]; curNoteId: number }) => {
     if (!Array.isArray(state.notebook)) return {};
     if (!state.curNoteId) return state.notebook[0] || {};
-    return state.notebook.find(note => note.id === state.curNoteId);
+    return state.notebook.find(note => note.id === state.curNoteId) || {};
   }
 };
 const mutations = {
