@@ -12,7 +12,7 @@
         <Icon name="delete" class="delete"/>
       </router-link>
     </div>
-    <div class="logout" @click="logout">
+    <div class="logout" @click="onLogout">
       <Icon name="backto" class="backto"/>
     </div>
   </div>
@@ -22,17 +22,18 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import Avatar from '@/components/Avatar.vue';
-import Auth from '@/apis/auth';
-import EventBus from '@/helpers/eventBus';
+import {mapActions} from 'vuex';
 
 @Component({
-  components: {Avatar}
+  components: {Avatar},
+  methods: {...mapActions(['logout'])}
 })
 export default class Sidebar extends Vue {
-  logout() {
-    Auth.logout().then(() => {
-      this.$router.push('login');
-      EventBus.$emit('isLogin', 'visitor');
+  logout!: Function;
+
+  onLogout() {
+    this.logout().then(() => {
+      this.$router.replace('/login');
     });
   }
 }

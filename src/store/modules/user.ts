@@ -25,6 +25,11 @@ const actions: ActionTree<any, {}> = {
       commit('setUser', {user: res.data});
     });
   },
+  logout({commit}) {
+    return Auth.logout().then(() => {
+      commit('setUser', {user: null});
+    });
+  },
   checkLogin({commit, state}) {
     if (state.user) return Promise.resolve();
     return Auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
