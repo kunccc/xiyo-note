@@ -61,7 +61,7 @@ const md = new MarkdownIt();
   }
 })
 export default class NoteDetail extends Vue {
-  curNote!: { id: number; title: string; content: string };
+  curNote!: { id: number; title: string; content: string; notebookId: number };
   notebook!: [];
   status = '已保存';
   isShowPreview = false;
@@ -89,7 +89,14 @@ export default class NoteDetail extends Vue {
     this.$confirm('您确定要删除当前笔记吗？').then(() => {
       this.deleteNote({noteId: this.curNote.id})
         .then(() => {
-          this.$router.replace('/note');
+          this.setCurNote();
+          this.$router.replace({
+            path: '/note',
+            query: {
+              noteId: (this.curNote.id).toString(),
+              notebookId: (this.curNote.notebookId).toString()
+            }
+          });
         });
     });
   }

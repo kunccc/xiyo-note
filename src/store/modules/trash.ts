@@ -24,7 +24,7 @@ const mutations = {
   deleteTrashNote(state: { trashNotes: { id: number }[] }, payload: { noteId: number }) {
     state.trashNotes = state.trashNotes.filter(note => note.id !== payload.noteId);
   },
-  setCurTrashNote(state: { curTrashNoteId: number }, payload: { noteId: string }) {
+  setCurTrashNote(state: { curTrashNoteId: number }, payload: { noteId: string } = {noteId: ''}) {
     state.curTrashNoteId = parseInt(payload.noteId);
   }
 };

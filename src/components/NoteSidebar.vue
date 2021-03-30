@@ -89,7 +89,7 @@ export default class NoteSidebar extends Vue {
     }
     this.setCurBook({curBookId: notebookId});
     this.getNotebook({notebookId}).then(() => {
-      this.setCurNote({});
+      this.setCurNote();
       this.$router.replace({
         path: '/note',
         query: {
