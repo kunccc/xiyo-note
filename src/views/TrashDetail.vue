@@ -102,11 +102,13 @@ export default class TrashDetail extends Vue {
   }
 
   onDelete() {
-    this.deleteTrashNote({noteId: this.curTrashNote.id}).then(() => {
-      this.setCurTrashNote();
-      this.$router.replace({
-        path: '/trash',
-        query: {noteId: (this.curTrashNote.id).toString()}
+    this.$confirm('删除后将无法恢复，确定删除吗？').then(() => {
+      this.deleteTrashNote({noteId: this.curTrashNote.id}).then(() => {
+        this.setCurTrashNote();
+        this.$router.replace({
+          path: '/trash',
+          query: {noteId: (this.curTrashNote.id).toString()}
+        });
       });
     });
   }
