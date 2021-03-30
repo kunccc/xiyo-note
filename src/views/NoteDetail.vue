@@ -154,6 +154,9 @@ export default class NoteDetail extends Vue {
         padding: 20px 22px;
         font-family: 'Monaco', courier, monospace;
       }
+      .markdown {
+        padding: 20px 22px;
+      }
     }
   }
 }

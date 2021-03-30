@@ -26,7 +26,7 @@ const mutations = {
     if (note) state.curNote = note;
   },
   deleteNote(state: { notebook: { id: number }[] }, payload: { noteId: number }) {
-    state.notebook.filter(note => note.id !== payload.noteId);
+    state.notebook = state.notebook.filter(note => note.id !== payload.noteId);
   },
   setCurNote(state: { curNoteId: number }, payload: { curNoteId: string }) {
     state.curNoteId = parseInt(payload.curNoteId);

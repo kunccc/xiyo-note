@@ -14,7 +14,7 @@ const mutations = {
     state.user = payload.user;
   }
 };
-const actions: ActionTree<Function, {}> = {
+const actions: ActionTree<any, {}> = {
   loginUser({commit}, {username, password}) {
     return Auth.login({username, password}).then((res: { data: {} }) => {
       commit('setUser', {user: res.data});
@@ -25,9 +25,10 @@ const actions: ActionTree<Function, {}> = {
       commit('setUser', {user: res.data});
     });
   },
-  checkLogin({commit}, path) {
+  checkLogin({commit, state}) {
+    if (state.user) return Promise.resolve();
     return Auth.getInfo().then((res: { isLogin: boolean; data: { username: string } }) => {
-      if (!res.isLogin) router.push(path);
+      if (!res.isLogin) router.push('/login');
       else commit('setUser', {user: res.data});
     });
   }

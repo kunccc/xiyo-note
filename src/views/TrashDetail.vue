@@ -1,28 +1,184 @@
 <template>
-  <div id="trash-detail">
-    <h1>noteId : {{ $route.query.noteId }}</h1>
+  <div id="trash">
+    <div class="trashSidebar">
+      <h3 class="notebookTitle">回收站</h3>
+      <div class="menu">
+        <div>更新时间</div>
+        <div>标题</div>
+      </div>
+      <ul class="trashNotes">
+        <li v-for="note in trashNotes" :key="trashNotes.indexOf(note)">
+          <router-link :to="`/trash?noteId=${note.id}`">
+            <span class="data">{{ note.friendlyUpdatedAt }}</span>
+            <span class="title">{{ note.title }}</span>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="noteDetail">
+      <div class="noteBar" v-if="true">
+        <span>创建时间：{{ curTrashNote.friendlyCreatedAt }} 丨</span>
+        <span>更新时间：{{ curTrashNote.friendlyUpdatedAt }} 丨</span>
+        <span>所属笔记本：{{ belongTo }}</span>
+        <a class="btn action" @click="onRevert">恢复</a>
+        <a class="btn action" @click="onDelete">彻底删除</a>
+      </div>
+      <div class="noteTitle">
+        <span>{{ curTrashNote.title }}</span>
+      </div>
+      <div class="editor">
+        <div class="preview markdown" v-html="compiledMarkdown"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {Component} from 'vue-property-decorator';
-import Auth from '@/apis/auth';
+import {Component, Watch} from 'vue-property-decorator';
+import MarkdownIt from 'markdown-it';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
+import {Route} from 'vue-router';
 
-@Component
+const md = new MarkdownIt();
+
+@Component({
+  methods: {
+    ...mapActions([
+      'checkLogin',
+      'deleteTrashNote',
+      'revertTrashNote',
+      'getTrashNotes',
+      'getNotebooks'
+    ]),
+    ...mapMutations([
+      'setCurTrashNote'
+    ])
+  },
+  computed: {
+    ...mapGetters([
+      'curTrashNote',
+      'trashNotes',
+      'belongTo'
+    ])
+  }
+})
 export default class TrashDetail extends Vue {
-  msg = '回收站笔记详情页';
+  curTrashNote!: { id: number; content: string; friendlyCreatedAt: string; friendlyUpdatedAt: string; title: string };
+  checkLogin!: Function;
+  deleteTrashNote!: Function;
+  revertTrashNote!: Function;
+  getTrashNotes!: Function;
+  setCurTrashNote!: Function;
+  getNotebooks!: Function;
+
+  @Watch('$route', {immediate: true})
+  onRouteChanged(route: Route) {
+    this.setCurTrashNote({noteId: route.query.noteId});
+  }
 
   created() {
-    Auth.getInfo().then((res: { isLogin: boolean }) => {
-      if (!res.isLogin) this.$router.push('/login');
+    this.checkLogin();
+    this.getNotebooks();
+    this.getTrashNotes().then(() => {
+      this.setCurTrashNote({noteId: this.$route.query.noteId});
     });
+  }
+
+  onRevert() {
+    this.revertTrashNote({noteId: this.curTrashNote.id});
+  }
+
+  onDelete() {
+    this.deleteTrashNote({noteId: this.curTrashNote.id});
+  }
+
+  get compiledMarkdown() {
+    return md.render(this.curTrashNote.content || '');
   }
 }
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  color: blue;
+@import "~@/assets/styles/helper.scss";
+#trash {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  .trashSidebar {
+    width: 400px;
+    border-right: 1px solid #ccc;
+    .notebookTitle {
+      font-size: 20px;
+      font-weight: normal;
+      text-align: center;
+      padding: 10px 0;
+      color: #333;
+      background-color: #f7f7f7;
+    }
+    .menu {
+      display: flex;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+      div {
+        width: 50%;
+        padding: 4px 10px;
+        &:nth-child(1) {
+          border: 1px solid #aaa;
+          border-left: none;
+        }
+        &:nth-child(2) {
+          border-top: 1px solid #aaa;
+          border-bottom: 1px solid #aaa;
+        }
+      }
+    }
+    .trashNotes {
+      li {
+        &:nth-child(odd) {
+          background: #f2f2f2;
+        }
+        a {
+          display: flex;
+          font-size: 14px;
+          border: 2px solid transparent;
+        }
+        .router-link-exact-active {
+          border: 2px solid $color-highlight;
+          border-radius: 3px;
+        }
+        span {
+          flex: 1;
+          padding: 5px 10px;
+        }
+      }
+    }
+  }
+  .noteDetail {
+    width: 100%;
+    background: #fff;
+    .noteBar {
+      padding: 6px 22px;
+      color: #999;
+      box-shadow: 0 1.5px 1.5px rgba(0, 0, 0, 0.15);
+    }
+    span {
+      margin-right: 4px;
+    }
+    .action {
+      float: right;
+    }
+    .noteTitle {
+      font-size: 20px;
+      margin: 20px 22px;
+    }
+    .editor {
+      height: 100%;
+      font-size: 16px;
+      padding: 20px 22px;
+      font-family: 'Monaco', courier, monospace;
+    }
+  }
 }
 </style>

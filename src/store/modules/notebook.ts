@@ -32,8 +32,9 @@ const mutations = {
     state.curBookId = payload.curBookId;
   }
 };
-const actions: ActionTree<Function, {}> = {
-  getNotebooks({commit}) {
+const actions: ActionTree<any, {}> = {
+  getNotebooks({commit, state}) {
+    if (state.notebooks) return Promise.resolve();
     return Notebooks.getAll().then(res => {
       commit('setNotebooks', {notebooks: res.data});
     });
