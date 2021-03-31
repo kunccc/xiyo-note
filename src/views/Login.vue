@@ -93,6 +93,7 @@ export default class Login extends Vue {
         this.register.isError = true;
         this.register.notice = res.msg;
       });
+      this.$message.success('登录成功');
     }, 1000);
   }
 
@@ -121,6 +122,7 @@ export default class Login extends Vue {
         this.login.isError = true;
         this.login.notice = res.msg;
       });
+      this.$message.success('登录成功');
     }, 1000);
   }
 }
