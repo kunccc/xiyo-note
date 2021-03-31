@@ -207,7 +207,7 @@ export default class TrashDetail extends Vue {
       height: 100%;
       font-size: 16px;
       padding: 20px 22px;
-      font-family: Consolas, 'Monaco', courier, monospace;
+      font-family: 'Monaco', courier, monospace;
     }
   }
   .empty {

@@ -1,5 +1,5 @@
 <template>
-  <div id="sidebar">
+  <div id="sidebar" v-if="isLogin">
     <Avatar/>
     <div class="link">
       <router-link to="/note" title="笔记">
@@ -12,7 +12,7 @@
         <Icon name="delete" class="delete"/>
       </router-link>
     </div>
-    <div class="logout" @click="onLogout">
+    <div class="logout" title="退出登录" @click="onLogout">
       <Icon name="backto" class="backto"/>
     </div>
   </div>
@@ -20,20 +20,28 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {Component} from 'vue-property-decorator';
+import {Component, Watch} from 'vue-property-decorator';
 import Avatar from '@/components/Avatar.vue';
 import {mapActions} from 'vuex';
 
 @Component({
   components: {Avatar},
-  methods: {...mapActions(['logout'])}
+  methods: {...mapActions(['logout']),},
 })
 export default class Sidebar extends Vue {
+  isLogin = this.$route.path !== '/login';
   logout!: Function;
 
+  @Watch('$route')
+  onRouterChanged() {
+    this.isLogin = this.$route.path !== '/login';
+  }
+
   onLogout() {
-    this.logout().then(() => {
-      this.$router.replace('/login');
+    this.$confirm('您确定要退出登录吗').then(() => {
+      this.logout().then(() => {
+        this.$router.replace('/login');
+      });
     });
   }
 }

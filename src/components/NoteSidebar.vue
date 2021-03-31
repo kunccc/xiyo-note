@@ -85,7 +85,7 @@ export default class NoteSidebar extends Vue {
       }
     });
     EventBus.$on('update:notebook', () => {
-      this.getNotebook({notebookId: this.curBook.id}).then(() => {
+      this.getNotebook({notebookId: parseInt(this.$route.query.notebookId as string)}).then(() => {
         this.setCurNote({curNoteId: parseInt(this.$route.query.noteId as string)});
       });
     });

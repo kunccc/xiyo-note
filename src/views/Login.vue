@@ -30,6 +30,7 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import {mapActions} from 'vuex';
+import {Loading} from 'element-ui';
 
 @Component({
   methods: {
@@ -78,17 +79,21 @@ export default class Login extends Vue {
       this.register.notice = '密码长度为 6~16 个字符';
       return;
     }
-    this.registerUser({
-      username: this.register.username,
-      password: this.register.password
-    }).then(() => {
-      this.register.isError = false;
-      this.register.notice = '';
-      this.$router.push('/notebooks');
-    }).catch((res: { msg: string }) => {
-      this.register.isError = true;
-      this.register.notice = res.msg;
-    });
+    const loadingInstance = Loading.service({background: 'rgba(255,255,255,.65)'});
+    setTimeout(() => {
+      loadingInstance.close();
+      this.registerUser({
+        username: this.register.username,
+        password: this.register.password
+      }).then(() => {
+        this.register.isError = false;
+        this.register.notice = '';
+        this.$router.push('/notebooks');
+      }).catch((res: { msg: string }) => {
+        this.register.isError = true;
+        this.register.notice = res.msg;
+      });
+    }, 1000);
   }
 
   onLogin() {
@@ -102,17 +107,21 @@ export default class Login extends Vue {
       this.login.notice = '密码长度为 6~16 个字符';
       return;
     }
-    this.loginUser({
-      username: this.login.username,
-      password: this.login.password
-    }).then(() => {
-      this.login.isError = false;
-      this.login.notice = '';
-      this.$router.push('/notebooks');
-    }).catch((res: { msg: string }) => {
-      this.login.isError = true;
-      this.login.notice = res.msg;
-    });
+    const loadingInstance = Loading.service({background: 'rgba(255,255,255,.65)'});
+    setTimeout(() => {
+      loadingInstance.close();
+      this.loginUser({
+        username: this.login.username,
+        password: this.login.password
+      }).then(() => {
+        this.login.isError = false;
+        this.login.notice = '';
+        this.$router.push('/notebooks');
+      }).catch((res: { msg: string }) => {
+        this.login.isError = true;
+        this.login.notice = res.msg;
+      });
+    }, 1000);
   }
 }
 </script>

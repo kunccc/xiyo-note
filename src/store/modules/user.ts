@@ -6,8 +6,8 @@ const state = {
   user: null
 };
 const getters = {
-  username: (state: { user: { username: string } }) => state.user === null ? '未登录' : state.user.username,
-  slug: (state: { user: { username: string } }) => state.user === null ? '未' : state.user.username.charAt(0)
+  username: (state: { user: { username: string } }) => state.user === null ? 'Visitor' : state.user.username,
+  slug: (state: { user: { username: string } }) => state.user === null ? 'V' : state.user.username.charAt(0)
 };
 const mutations = {
   setUser(state: { user: {} }, payload: { user: {} }) {

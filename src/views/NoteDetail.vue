@@ -168,7 +168,7 @@ export default class NoteDetail extends Vue {
         height: 100%;
         font-size: 16px;
         padding: 20px 22px;
-        font-family: Consolas, 'Monaco', courier, monospace;
+        font-family: 'Monaco', courier, monospace;
       }
       .markdown {
         padding: 20px 22px;
