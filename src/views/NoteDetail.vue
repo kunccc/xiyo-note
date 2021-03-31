@@ -2,7 +2,7 @@
   <div id="note">
     <NoteSidebar @update:notebook="val => notebook = val"/>
     <div class="noteDetail">
-      <div class="empty" v-show="!curNote.id">暂无笔记<br/>请新建笔记</div>
+      <div class="empty" v-show="!curNote.id">暂无笔记<br/><br/>请添加笔记</div>
       <div v-show="curNote.id" class="wrapper">
         <div class="noteBar">
           <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>

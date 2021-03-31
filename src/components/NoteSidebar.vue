@@ -12,7 +12,7 @@
         <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <div @click="onAddNote" title="添加笔记">
+    <div @click="onAddNote" title="新建笔记">
       <Icon name="addNote"/>
     </div>
     <div class="menu">
@@ -92,19 +92,26 @@ export default class NoteSidebar extends Vue {
   }
 
   handleCommand(notebookId: number | string) {
-    if (notebookId === 'trash') {
-      return this.$router.push('trash');
-    }
+    if (notebookId === 'trash') {return this.$router.push('trash');}
     this.setCurBook({curBookId: notebookId});
     this.getNotebook({notebookId}).then(() => {
       this.setCurNote();
-      this.$router.replace({
-        path: '/note',
-        query: {
-          noteId: (this.curNote.id).toString(),
-          notebookId: (this.curBook.id).toString()
-        }
-      });
+      if (!this.curNote.id) {
+        this.$router.replace({
+          path: '/note',
+          query: {
+            notebookId: (this.curBook.id).toString()
+          }
+        });
+      } else {
+        this.$router.replace({
+          path: '/note',
+          query: {
+            noteId: (this.curNote.id).toString(),
+            notebookId: (this.curBook.id).toString()
+          }
+        });
+      }
     });
   }
 
