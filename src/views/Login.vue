@@ -187,7 +187,7 @@ export default class Login extends Vue {
             font-size: 14px;
             margin-top: 10px;
             &:focus {
-              border: 3px solid #9dcaf8;
+              border: 2px solid $color-highlight;
             }
           }
           > .button {
