@@ -35,10 +35,10 @@ export default class Avatar extends Vue {
 @import "~@/assets/styles/helper.scss";
 span {
   display: inline-block;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   text-align: center;
-  line-height: 32px;
+  line-height: 33px;
   border-radius: 50%;
   background: $color-highlight;
   color: #fff;

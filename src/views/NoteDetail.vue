@@ -2,17 +2,17 @@
   <div id="note">
     <NoteSidebar @update:notebook="val => notebook = val"/>
     <div class="noteDetail">
-      <div class="empty" v-show="!curNote.id">请选择笔记</div>
+      <div class="empty" v-show="!curNote.id">暂无笔记</div>
       <div v-show="curNote.id" class="wrapper">
         <div class="noteBar">
           <span>创建时间：{{ curNote.friendlyCreatedAt }} 丨</span>
           <span>更新时间：{{ curNote.friendlyUpdatedAt }} 丨</span>
           <span>{{ status }}</span>
-          <span @click="onDeleteNote">
+          <span @click="onDeleteNote" title="删除笔记">
             <Icon name="trash"/>
           </span>
-          <span @click="isShowPreview = !isShowPreview">
-            <Icon name="magnify"/>
+          <span @click="isShowPreview = !isShowPreview" :title="isShowPreview ? '取消预览' : '预览'">
+            <Icon name="preview" :class="{selected: isShowPreview}"/>
           </span>
         </div>
         <div class="noteTitle">
@@ -38,6 +38,7 @@ import {Route} from 'vue-router';
 import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
 import {mapActions, mapGetters, mapMutations} from 'vuex';
+import EventBus from '@/helpers/eventBus';
 
 const md = new MarkdownIt();
 
@@ -53,10 +54,11 @@ const md = new MarkdownIt();
     ...mapActions([
       'updateNote',
       'deleteNote',
-      'checkLogin'
+      'checkLogin',
+      'getNotebooks'
     ]),
     ...mapMutations([
-      'setCurNote'
+      'setCurNote',
     ])
   }
 })
@@ -80,7 +82,10 @@ export default class NoteDetail extends Vue {
     this.checkLogin('/login');
     this.onUpdateNote = _.debounce(() => {
       this.updateNote({noteId: this.curNote.id, title: this.curNote.title, content: this.curNote.content})
-        .then(() => {this.status = '已保存';})
+        .then(() => {
+          this.status = '已保存';
+          EventBus.$emit('update:notebook');
+        })
         .catch(() => {this.status = '保存出错';});
     }, 500);
   }
@@ -108,6 +113,7 @@ export default class NoteDetail extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "~@/assets/styles/helper.scss";
 #note {
   display: flex;
   flex: 1;
@@ -136,6 +142,9 @@ export default class NoteDetail extends Vue {
         float: right;
         margin-left: 10px;
         cursor: pointer;
+        &.selected {
+          fill: $color-highlight
+        }
       }
       span {
         margin-right: 4px;
@@ -145,7 +154,7 @@ export default class NoteDetail extends Vue {
       input {
         border: none;
         outline: none;
-        font-size: 20px;
+        font-size: 22px;
         margin: 20px 22px;
       }
     }
@@ -159,7 +168,7 @@ export default class NoteDetail extends Vue {
         height: 100%;
         font-size: 16px;
         padding: 20px 22px;
-        font-family: 'Monaco', courier, monospace;
+        font-family: Consolas, 'Monaco', courier, monospace;
       }
       .markdown {
         padding: 20px 22px;

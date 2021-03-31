@@ -1,33 +1,29 @@
 import Vue from 'vue';
 import VueRouter, {RouteConfig} from 'vue-router';
-import Login from '@/views/Login.vue';
-import NotebookList from '@/views/NotebookList.vue';
-import NoteDetail from '@/views/NoteDetail.vue';
-import TrashDetail from '@/views/TrashDetail.vue';
-import NotFound from '@/components/NotFound.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/login',
-    component: Login
+    path: '/',
+    alias: '/notebooks',
+    component: () => import('@/views/NotebookList.vue')
   },
   {
-    path: '/notebooks',
-    component: NotebookList
+    path: '/login',
+    component: () => import('@/views/Login.vue')
   },
   {
     path: '/note',
-    component: NoteDetail
+    component: () => import('@/views/NoteDetail.vue')
   },
   {
     path: '/trash',
-    component: TrashDetail
+    component: () => import('@/views/TrashDetail.vue')
   },
   {
     path: '*',
-    component: NotFound
+    component: () => import('@/components/NotFound.vue')
   }
 ];
 

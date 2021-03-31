@@ -7,7 +7,7 @@
       </a>
     </header>
     <main>
-      <div class="layout">
+      <div class="layout" v-if="notebooks[0]">
         <h3>笔记本列表({{ notebooks.length }})</h3>
         <div class="bookList">
           <router-link v-for="notebook in notebooks" :to="`/note?notebookId=${notebook.id}`" class="notebook"
@@ -23,6 +23,7 @@
           </router-link>
         </div>
       </div>
+      <div class="empty" v-if="!notebooks[0]">暂未创建笔记本</div>
     </main>
   </div>
 </template>
@@ -170,6 +171,12 @@ export default class NotebookList extends Vue {
     .errorMsg {
       font-size: 12px;
       color: red;
+    }
+    .empty {
+      font-size: 50px;
+      color: #ccc;
+      text-align: center;
+      margin-top: 100px;
     }
   }
 }

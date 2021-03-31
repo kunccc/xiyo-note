@@ -12,7 +12,9 @@
         <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <span class="btn add-note" @click="onAddNote">添加笔记</span>
+    <div @click="onAddNote" title="添加笔记">
+      <Icon name="addNote"/>
+    </div>
     <div class="menu">
       <div class="time">更新时间</div>
       <div class="title">标题</div>
@@ -32,6 +34,7 @@
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
 import {mapGetters, mapActions, mapMutations} from 'vuex';
+import EventBus from '@/helpers/eventBus';
 
 @Component({
   methods: {
@@ -80,6 +83,11 @@ export default class NoteSidebar extends Vue {
           }
         });
       }
+    });
+    EventBus.$on('update:notebook', () => {
+      this.getNotebook({notebookId: this.curBook.id}).then(() => {
+        this.setCurNote({curNoteId: parseInt(this.$route.query.noteId as string)});
+      });
     });
   }
 
@@ -133,13 +141,19 @@ export default class NoteSidebar extends Vue {
       font-size: 20px;
     }
   }
-  > .add-note {
+  .icon {
     position: absolute;
-    top: 12px;
-    right: 8px;
-    box-shadow: 0 0 2px 0 #ccc;
-    border: none;
+    top: 14px;
+    right: 18px;
     z-index: 1;
+    width: 20px;
+    height: 20px;
+    fill: $color-highlight;
+    transition: all .5s ease;
+    &:hover {
+      cursor: pointer;
+      transform: scale(1.15) rotate(90deg);
+    }
   }
   > .menu {
     display: flex;

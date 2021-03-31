@@ -84,7 +84,7 @@ export default class Login extends Vue {
     }).then(() => {
       this.register.isError = false;
       this.register.notice = '';
-      this.$router.push('/notebook');
+      this.$router.push('/notebooks');
     }).catch((res: { msg: string }) => {
       this.register.isError = true;
       this.register.notice = res.msg;

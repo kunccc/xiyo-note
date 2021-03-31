@@ -15,13 +15,13 @@
         </li>
       </ul>
     </div>
-    <div class="noteDetail">
+    <div class="noteDetail" v-if="curTrashNote.id">
       <div class="noteBar" v-if="true">
         <span>创建时间：{{ curTrashNote.friendlyCreatedAt }} 丨</span>
         <span>更新时间：{{ curTrashNote.friendlyUpdatedAt }} 丨</span>
         <span>所属笔记本：{{ belongTo }}</span>
-        <a class="btn action" @click="onRevert">恢复</a>
-        <a class="btn action" @click="onDelete">彻底删除</a>
+        <a class="action" @click="onRevert">恢复</a>
+        <a class="action" @click="onDelete">彻底删除</a>
       </div>
       <div class="noteTitle">
         <span>{{ curTrashNote.title }}</span>
@@ -30,6 +30,7 @@
         <div class="preview markdown" v-html="compiledMarkdown"></div>
       </div>
     </div>
+    <div class="empty" v-if="!curTrashNote.id">回收站暂无笔记</div>
   </div>
 </template>
 
@@ -187,6 +188,14 @@ export default class TrashDetail extends Vue {
       margin-right: 4px;
     }
     .action {
+      color: #666;
+      font-size: 12px;
+      padding: 2px 6px;
+      background-color: #fff;
+      box-shadow: 0 0 2px 0 #ccc;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
       float: right;
       margin-left: 12px;
     }
@@ -198,8 +207,15 @@ export default class TrashDetail extends Vue {
       height: 100%;
       font-size: 16px;
       padding: 20px 22px;
-      font-family: 'Monaco', courier, monospace;
+      font-family: Consolas, 'Monaco', courier, monospace;
     }
+  }
+  .empty {
+    width: 100%;
+    font-size: 50px;
+    color: #ccc;
+    text-align: center;
+    margin-top: 100px;
   }
 }
 </style>
